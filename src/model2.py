@@ -452,10 +452,12 @@ def _extract_argmax_and_embed(embedding,
         if output_projection is not None:
             prev = nn_ops.xw_plus_b(prev, output_projection[0], output_projection[1])
         if is_sampling:
+            print('temperature :', opt.L)
             prev_symbol_sample = tf.squeeze(tf.multinomial(prev*opt.L,1))  #B 1   multinomial(log odds)
             prev_symbol_sample = array_ops.stop_gradient(prev_symbol_sample) # important
             emb_prev = embedding_ops.embedding_lookup(embedding, prev_symbol_sample)
         else:
+            print('SHOULD NEVER GET HERE')
             if is_softargmax:
                 prev_symbol_one_hot = tf.nn.log_softmax(prev*opt.L)  #B V
                 emb_prev = tf.matmul( tf.exp(prev_symbol_one_hot), embedding) # solve : Requires start <= limit when delta > 0

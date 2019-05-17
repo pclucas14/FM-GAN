@@ -14,7 +14,8 @@ import sys
 
 # reload(sys)
 # sys.setdefaultencoding('utf8')
-sys.path.append('/home/lqchen/work/textGAN/textGAN_public')
+# sys.path.append('/home/lqchen/work/textGAN/textGAN_public')
+sys.path.append('/home/ml/lpagec/tensorflow/FM-GAN')
 
 import tensorflow as tf
 from tensorflow.contrib import learn
@@ -453,10 +454,10 @@ def main():
     # train_text, val_text, test_text = x[3], x[4], x[5]
     # train_lab, val_lab, test_lab = x[6], x[7], x[8]
     # wordtoix, ixtoword = x[9], x[10]
-    trainpath = "./data/train_news.txt"
-    testpath = "./data/test_news.txt"
+    trainpath = "./data/NewsData/train_news.txt"
+    testpath = "./data/NewsData/test_news.txt"
     train, val =  np.loadtxt(trainpath), np.loadtxt(testpath)
-    ixtoword, _ = cPickle.load(open('./data/vocab_news.pkl','rb'))
+    ixtoword, _ = cPickle.load(open('./data/NewsData/vocab_news.pkl','rb'))
     ixtoword = {i:x for i,x in enumerate(ixtoword)}
     opt = Options()
 

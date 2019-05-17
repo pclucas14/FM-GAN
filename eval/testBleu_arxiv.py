@@ -21,18 +21,24 @@ import numpy as np
 
 # pdb.set_trace()
 
-real_text = './arxiv_result/arxiv_test.txt'  # arxiv_1w
+#real_text = './arxiv_result/arxiv_test.txt'  # arxiv_1w
 
-test_text = './arxiv_result/ot.txt'  # syn_val_words.txt
+#test_text = './arxiv_result/ot.txt'  # syn_val_words.txt
 
-for i in range(2, 6):
-    get_Bleu = Bleu(test_text=test_text, real_text=real_text, gram=i)
-    score = get_Bleu.get_bleu_parallel()
-    print(score)
 
-test_text = './arxiv_result/vae.txt'  # syn_val_words.txt
+real_text = '/home/ml/lpagec/tensorflow/FM-GAN/src/text_news/sents/Real_out.txt'
 
-for i in range(2, 6):
-    get_Bleu = Bleu(test_text=test_text, real_text=real_text, gram=i)
-    score = get_Bleu.get_bleu_parallel()
-    print(score)
+for std in [0.01, 0.1, 0.5, 1, 1.1]:
+    test_text = '../src/OUT_SAMPLES_STD/text_' + str(std) + '.txt' #../src/text_news/sents/Lucas_out.txt'
+
+    for i in [5]:#range(2, 6):
+        get_Bleu = Bleu(test_text=test_text, real_text=real_text, gram=i)
+        score = get_Bleu.get_bleu_parallel()
+        print(std, score)
+    
+#test_text = './arxiv_result/vae.txt'  # syn_val_words.txt
+
+#for i in range(2, 6):
+##    get_Bleu = Bleu(test_text=test_text, real_text=real_text, gram=i)
+#    score = get_Bleu.get_bleu_parallel()
+#    print(score)

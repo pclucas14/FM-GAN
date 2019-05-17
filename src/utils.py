@@ -97,6 +97,9 @@ def prepare_data_for_rnn(seqs_x, opt, is_add_GO = True):
 
 
 def restore_from_save(t_vars, sess, opt):
+    print('old save path', opt.save_path)
+    opt.save_path = '/home/ml/lpagec/tensorflow/FM-GAN/sshfs/news_128_dim_cnn_rnn_s0'
+    # TODO: remove -99 if not loading MLE pretrained model
     save_keys = tensors_key_in_file(opt.save_path)
     #print(save_keys.keys()) 
     ss = set([var.name for var in t_vars])&set([s+":0" for s in save_keys.keys()])

@@ -2,7 +2,12 @@ import nltk
 import re
 import pdb
 
+import sys
+sys.path.append('/home/ml/lpagec/tensorflow/FM-GAN')
+sys.path.append('/home/ml/lpagec/tensorflow/FM-GAN/pycocoevalcap')
+sys.path.append('/home/ml/lpagec/tensorflow/FM-GAN/pycocoevalcap/bleu')
 from pycocoevalcap.bleu.bleu import Bleu
+
 def clean_str(string, TREC=False):
     """
     Tokenization/string cleaning for all datasets except for SST.
@@ -30,7 +35,7 @@ def score(ref, hypo):
     score, dictionary of scores
     """
     scorers = [
-        (Bleu(4), ["Bleu_1", "Bleu_2", "Bleu_3", "Bleu_4"])
+        (Bleu(5), ["Bleu_5"])
     ]
     final_scores = {}
     for scorer, method in scorers:
@@ -42,8 +47,9 @@ def score(ref, hypo):
             final_scores[method] = score
     return final_scores
 
-input_file = './arxiv_result/vae_words.txt' #syn_val_words
+input_file = '../src/text_news/sents/Lucas_out.txt'
 all_sents = []
+
 with open(input_file, 'rb')as fin:
     for line in fin:
         #line.decode('utf-8')
@@ -53,18 +59,18 @@ with open(input_file, 'rb')as fin:
         all_sents.append(line)
 
 import numpy as np
-ans = np.zeros(4)
+ans = np.zeros(1)
 for i in range(len(all_sents)):
+    #print(i, ' / ', len(all_sents))
     tmp = all_sents[:]
     pop = tmp.pop(i)
     ref = {0: tmp}
     hop = {0: [pop]}
 
-    ans[3] += score(ref, hop)['Bleu_4']
-    ans[2] += score(ref, hop)['Bleu_3']
-    ans[1] += score(ref, hop)['Bleu_2']
-    ans[0] += score(ref, hop)['Bleu_1']
+    import pdb; pdb.set_trace()
+    ans[0] += score(ref, hop)['Bleu_5']
     # pdb.set_trace()
+    print(ans[0] / i)
 
 ans /= len(all_sents)
 print('sink: ', ans)

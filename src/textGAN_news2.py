@@ -7,7 +7,8 @@ import sys
 
 # reload(sys)
 # sys.setdefaultencoding('utf8')
-sys.path.append('/home/lqchen/work/textGAN/textGAN_public')
+# sys.path.append('/home/lqchen/womork/textGAN/textGAN_public')
+sys.path.append('/home/ml/lpagec/tensorflow/FM-GAN')
 
 import tensorflow as tf
 from tensorflow.contrib import learn
@@ -293,7 +294,9 @@ def run_model(opt, train, val, ixtoword):
     config.gpu_options.per_process_gpu_memory_fraction = 0.8
     np.set_printoptions(precision=3)
     np.set_printoptions(threshold=np.inf)
-    saver = tf.train.Saver()
+
+    # keep all checkpoints
+    saver = tf.train.Saver(max_to_keep=None)
 
     run_metadata = tf.RunMetadata()
 
@@ -335,6 +338,7 @@ def run_model(opt, train, val, ixtoword):
         # pdb.set_trace()
 
         for epoch in range(opt.max_epochs):
+            saver.save(sess, opt.save_path, global_step=100 + epoch)
             print("Starting epoch %d" % epoch)
             # if epoch >= 10:
             #     print("Relax embedding ")
@@ -381,10 +385,14 @@ def run_model(opt, train, val, ixtoword):
 
 
                     res = sess.run(res_, feed_dict={x_: x_val_batch, x_org_: x_val_batch_org})
-                    print("Validation d_loss %f, g_loss %f  mean_dist %f" % (d_loss_val, g_loss_val, res['mean_dist']))
-                    print("Sent:" + u' '.join([ixtoword[x] for x in res['syn_sent']
+                    try:
+                        print("Validation d_loss %f, g_loss %f  mean_dist %f" % (d_loss_val, g_loss_val, res['mean_dist']))
+                        print("Sent:" + u' '.join([ixtoword[x] for x in res['syn_sent']
                                                [0] if x != 0]))#.encode('utf-8', 'ignore').decode("utf8").strip())
-                    print("MMD loss %f, GAN loss %f" % (res['mmd'], res['gan']))
+                        print("MMD loss %f, GAN loss %f" % (res['mmd'], res['gan']))
+                    except Exception as e: 
+                        print(e)
+
                     # np.savetxt('./text_arxiv/syn_val_words.txt', res['syn_sent'], fmt='%i', delimiter=' ')
                     if opt.discrimination:
                         print ("Real Prob %f Fake Prob %f" % (res['prob_r'], res['prob_f']))
@@ -409,11 +417,13 @@ def run_model(opt, train, val, ixtoword):
 
                     val_set = [prepare_for_bleu(s) for s in val_sents]
                     [bleu2s, bleu3s, bleu4s] = cal_BLEU([prepare_for_bleu(s) for s in res['syn_sent']], {0: val_set})
+                    import pdb; pdb.set_trace()
                     print('Val BLEU (2,3,4): ' + ' '.join([str(round(it, 3)) for it in (bleu2s, bleu3s, bleu4s)]))
 
                     summary = sess.run(merged, feed_dict={x_: x_val_batch, x_org_: x_val_batch_org})
                     test_writer.add_summary(summary, uidx)
 
+                    # saver.save(sess, './save_news/news.ckpt')
 
                 # if uidx % opt.print_freq == 0:
                 #     #pdb.set_trace()
@@ -448,10 +458,11 @@ def main():
     # train_text, val_text, test_text = x[3], x[4], x[5]
     # train_lab, val_lab, test_lab = x[6], x[7], x[8]
     # wordtoix, ixtoword = x[9], x[10]
-    trainpath = "./data/train_news.txt"
-    testpath = "./data/test_news.txt"
+    
+    trainpath = "./data/NewsData/train_news.txt"
+    testpath = "./data/NewsData/test_news.txt"
     train, val =  np.loadtxt(trainpath), np.loadtxt(testpath)
-    ixtoword, _ = cPickle.load(open('./data/vocab_news.pkl','rb'))
+    ixtoword, _ = cPickle.load(open('./data/NewsData/vocab_news.pkl','rb'))
     ixtoword = {i:x for i,x in enumerate(ixtoword)}
     opt = Options()
 

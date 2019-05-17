@@ -3,7 +3,8 @@ import os
 GPUID = 1
 os.environ['CUDA_VISIBLE_DEVICES'] = str(GPUID)
 import sys
-sys.path.append('/home/lqchen/work/textGAN/textGAN_public')
+sys.path.append('/home/ml/lpagec/tensorflow/FM-GAN')
+#sys.path.append('/home/lqchen/work/textGAN/textGAN_public')
 
 import tensorflow as tf
 from tensorflow.contrib import learn
@@ -414,10 +415,10 @@ def main():
         ixtoword = {i:x for i,x in enumerate(ixtoword)}
 
     elif choose_data == 'news':
-        trainpath = "./data/train_news.txt"
-        testpath = "./data/test_news.txt"
+        trainpath = "./data/NewsData/train_news.txt"
+        testpath = "./data/NewsData/test_news.txt"
         train, val =  np.loadtxt(trainpath), np.loadtxt(testpath)
-        ixtoword, _ = cPickle.load(open('./data/vocab_news.pkl','rb'))
+        ixtoword, _ = cPickle.load(open('./data/NewsData/vocab_news.pkl','rb'))
         ixtoword = {i:x for i,x in enumerate(ixtoword)}
 
     opt = Options()
